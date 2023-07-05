@@ -16,7 +16,7 @@ interface Post {
     createdAt: Date;
 }
 
-export function createPost(object: object): Post {
+export function createPost(object: unknown): Post {
     const id = crypto.randomUUID();
 
     const result = db

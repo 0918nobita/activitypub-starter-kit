@@ -27,7 +27,11 @@ async function fetchActor(url: string) {
  * @param recipient The recipient's actor URL.
  * @param message the body of the request to send.
  */
-export async function send(sender: string, recipient: string, message: object) {
+export async function send(
+    sender: string,
+    recipient: string,
+    message: unknown
+) {
     const url = new URL(recipient);
 
     const actor = await fetchActor(recipient);
