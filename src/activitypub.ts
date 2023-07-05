@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 
 import { RequestHandler, Router } from 'express';
+import { Infer } from 'superstruct';
 
 import {
     createFollower,
@@ -11,15 +12,13 @@ import {
     listPosts,
     updateFollowing,
 } from './db.js';
-import { HOSTNAME, ACCOUNT, PUBLIC_KEY } from './env.js';
+import { ACCOUNT, ACTOR, HOSTNAME, PUBLIC_KEY } from './env.js';
 import { send, verify } from './request.js';
-import { Infer } from 'superstruct';
 import { Activity } from './types.js';
 
 export const activitypub = Router();
 
 activitypub.get('/:actor/outbox', (req, res) => {
-    const actor = req.app.get('actor') as string;
     if (req.params.actor !== ACCOUNT) return res.sendStatus(404);
 
     const posts = listPosts().filter(
@@ -28,13 +27,13 @@ activitypub.get('/:actor/outbox', (req, res) => {
 
     return res.contentType('application/activity+json').json({
         '@context': 'https://www.w3.org/ns/activitystreams',
-        id: `${actor}/outbox`,
+        id: `${ACTOR}/outbox`,
         type: 'OrderedCollection',
         totalItems: posts.length,
         orderedItems: posts.map((post) => ({
             ...post.contents,
-            id: `${actor}/posts/${post.id}`,
-            actor,
+            id: `${ACTOR}/posts/${post.id}`,
+            actor: ACTOR,
             published: post.createdAt.toISOString(),
             to: ['https://www.w3.org/ns/activitystreams#Public'],
             cc: [],
@@ -43,7 +42,6 @@ activitypub.get('/:actor/outbox', (req, res) => {
 });
 
 activitypub.post('/:actor/inbox', (async (req, res) => {
-    const actor = req.app.get('actor') as string;
     if (req.params.actor !== ACCOUNT) return res.sendStatus(404);
 
     /** If the request successfully verifies against the public key, `from` is the actor who sent it. */
@@ -63,11 +61,11 @@ activitypub.post('/:actor/inbox', (async (req, res) => {
 
     switch (body.type) {
         case 'Follow': {
-            await send(actor, body.actor, {
+            await send(ACTOR, body.actor, {
                 '@context': 'https://www.w3.org/ns/activitystreams',
                 id: `https://${HOSTNAME}/${crypto.randomUUID()}`,
                 type: 'Accept',
-                actor,
+                actor: ACTOR,
                 object: body,
             });
 
@@ -100,8 +98,6 @@ activitypub.post('/:actor/inbox', (async (req, res) => {
 }) as RequestHandler);
 
 activitypub.get('/:actor/followers', (req, res) => {
-    const actor = req.app.get('actor') as string;
-
     if (req.params.actor !== ACCOUNT) return res.sendStatus(404);
     const page = req.query.page;
 
@@ -112,26 +108,24 @@ activitypub.get('/:actor/followers', (req, res) => {
     if (!page) {
         return res.json({
             '@context': 'https://www.w3.org/ns/activitystreams',
-            id: `${actor}/followers`,
+            id: `${ACTOR}/followers`,
             type: 'OrderedCollection',
             totalItems: followers.length,
-            first: `${actor}/followers?page=1`,
+            first: `${ACTOR}/followers?page=1`,
         });
     }
 
     return res.json({
         '@context': 'https://www.w3.org/ns/activitystreams',
-        id: `${actor}/followers?page=${page as string}`,
+        id: `${ACTOR}/followers?page=${page as string}`,
         type: 'OrderedCollectionPage',
-        partOf: `${actor}/followers`,
+        partOf: `${ACTOR}/followers`,
         totalItems: followers.length,
         orderedItems: followers.map((follower) => follower.actor),
     });
 });
 
 activitypub.get('/:actor/following', (req, res) => {
-    const actor = req.app.get('actor') as string;
-
     if (req.params.actor !== ACCOUNT) return res.sendStatus(404);
     const page = req.query.page;
 
@@ -142,26 +136,24 @@ activitypub.get('/:actor/following', (req, res) => {
     if (!page) {
         return res.json({
             '@context': 'https://www.w3.org/ns/activitystreams',
-            id: `${actor}/following`,
+            id: `${ACTOR}/following`,
             type: 'OrderedCollection',
             totalItems: following.length,
-            first: `${actor}/following?page=1`,
+            first: `${ACTOR}/following?page=1`,
         });
     }
 
     return res.json({
         '@context': 'https://www.w3.org/ns/activitystreams',
-        id: `${actor}/following?page=${page as string}`,
+        id: `${ACTOR}/following?page=${page as string}`,
         type: 'OrderedCollectionPage',
-        partOf: `${actor}/following`,
+        partOf: `${ACTOR}/following`,
         totalItems: following.length,
         orderedItems: following.map((follow) => follow.actor),
     });
 });
 
 activitypub.get('/:actor', (req, res) => {
-    const actor = req.app.get('actor') as string;
-
     if (req.params.actor !== ACCOUNT) return res.sendStatus(404);
 
     return res.contentType('application/activity+json').json({
@@ -169,23 +161,22 @@ activitypub.get('/:actor', (req, res) => {
             'https://www.w3.org/ns/activitystreams',
             'https://w3id.org/security/v1',
         ],
-        id: actor,
+        id: ACTOR,
         type: 'Person',
         preferredUsername: ACCOUNT,
-        inbox: `${actor}/inbox`,
-        outbox: `${actor}/outbox`,
-        followers: `${actor}/followers`,
-        following: `${actor}/following`,
+        inbox: `${ACTOR}/inbox`,
+        outbox: `${ACTOR}/outbox`,
+        followers: `${ACTOR}/followers`,
+        following: `${ACTOR}/following`,
         publicKey: {
-            id: `${actor}#main-key`,
-            owner: actor,
+            id: `${ACTOR}#main-key`,
+            owner: ACTOR,
             publicKeyPem: PUBLIC_KEY,
         },
     });
 });
 
 activitypub.get('/:actor/posts/:id', (req, res) => {
-    const actor = req.app.get('actor') as string;
     if (req.params.actor !== ACCOUNT) return res.sendStatus(404);
 
     const post = findPost(req.params.id);
@@ -193,6 +184,6 @@ activitypub.get('/:actor/posts/:id', (req, res) => {
 
     return res.contentType('application/activity+json').json({
         ...post,
-        id: `${actor}/posts/${req.params.id}`,
+        id: `${ACTOR}/posts/${req.params.id}`,
     });
 });

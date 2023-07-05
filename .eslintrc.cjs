@@ -4,9 +4,14 @@ module.exports = {
         es2016: true,
         node: true,
     },
+    plugins: ['simple-import-sort'],
     extends: ['eslint:recommended', 'prettier'],
     parserOptions: {
         sourceType: 'module',
+    },
+    rules: {
+        'simple-import-sort/exports': 'error',
+        'simple-import-sort/imports': 'error',
     },
     overrides: [
         {

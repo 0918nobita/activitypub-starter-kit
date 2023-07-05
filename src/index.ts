@@ -1,13 +1,11 @@
 import express, { RequestHandler } from 'express';
 import morgan from 'morgan';
 
-import { ACCOUNT, HOSTNAME, PORT } from './env.js';
 import { activitypub } from './activitypub.js';
 import { admin } from './admin.js';
+import { ACCOUNT, ACTOR, HOSTNAME, PORT } from './env.js';
 
 const app = express();
-
-app.set('actor', `https://${HOSTNAME}/${ACCOUNT}`);
 
 app.use(
     express.text({ type: ['application/json', 'application/activity+json'] })
@@ -16,8 +14,6 @@ app.use(
 app.use(morgan('tiny'));
 
 app.get('/.well-known/webfinger', ((req, res) => {
-    const actor = req.app.get('actor') as string;
-
     const resource = req.query.resource;
     if (resource !== `acct:${ACCOUNT}@${HOSTNAME}`) return res.sendStatus(404);
 
@@ -27,7 +23,7 @@ app.get('/.well-known/webfinger', ((req, res) => {
             {
                 rel: 'self',
                 type: 'application/activity+json',
-                href: actor,
+                href: ACTOR,
             },
         ],
     });

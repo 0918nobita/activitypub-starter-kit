@@ -8,6 +8,7 @@ export const PORT = process.env.PORT || '3000';
 
 export const ACCOUNT = process.env.ACCOUNT || '';
 export const HOSTNAME = process.env.HOSTNAME || '';
+export const ACTOR = `https://${HOSTNAME}/${ACCOUNT}`;
 
 export const DATABASE_PATH = process.env.DATABASE_PATH || '';
 export const SCHEMA_PATH = process.env.SCHEMA_PATH || '';
