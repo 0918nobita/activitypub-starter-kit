@@ -11,7 +11,12 @@ import {
     getFollowing,
     listFollowers,
 } from './db.js';
-import { ACTOR, ADMIN_PASSWORD, ADMIN_USERNAME, HOSTNAME } from './env.js';
+import {
+    ACTOR,
+    ADMIN_PASSWORD,
+    ADMIN_USERNAME,
+    HOSTNAME,
+} from './express-env.js';
 import { send } from './request.js';
 import { ActivityPubObject } from './types.js';
 

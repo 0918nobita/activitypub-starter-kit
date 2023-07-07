@@ -4,7 +4,7 @@ import type { Request } from 'express';
 import fetch from 'node-fetch';
 import { assert } from 'superstruct';
 
-import { PRIVATE_KEY } from './env.js';
+import { PRIVATE_KEY } from './express-env.js';
 import { Actor } from './types.js';
 
 /** Fetches and returns an actor at a URL. */

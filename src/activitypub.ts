@@ -12,7 +12,7 @@ import {
     listPosts,
     updateFollowing,
 } from './db.js';
-import { ACCOUNT, ACTOR, HOSTNAME, PUBLIC_KEY } from './env.js';
+import { ACCOUNT, ACTOR, HOSTNAME, PUBLIC_KEY } from './express-env.js';
 import { send, verify } from './request.js';
 import { Activity } from './types.js';
 

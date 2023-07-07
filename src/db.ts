@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 
 import Database from 'better-sqlite3';
 
-import { DATABASE_PATH, SCHEMA_PATH } from './env.js';
+import { DATABASE_PATH, SCHEMA_PATH } from './express-env.js';
 
 const db = new Database(DATABASE_PATH);
 

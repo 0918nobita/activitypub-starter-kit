@@ -3,7 +3,7 @@ import morgan from 'morgan';
 
 import { activitypub } from './activitypub.js';
 import { admin } from './admin.js';
-import { ACCOUNT, ACTOR, HOSTNAME, PORT } from './env.js';
+import { ACCOUNT, ACTOR, HOSTNAME, PORT } from './express-env.js';
 
 const app = express();
 
