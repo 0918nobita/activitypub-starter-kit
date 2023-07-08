@@ -2,9 +2,7 @@ import type { FastifyInstance } from 'fastify';
 
 import { HOSTNAME } from '../fastify-env.js';
 
-export const withNodeInfoEndpoints = (
-    server: FastifyInstance
-): FastifyInstance => {
+export const nodeInfo = (server: FastifyInstance): FastifyInstance => {
     // nodeinfo に対応していることを表明するためのエンドポイント
     server.get('/.well-known/nodeinfo', () => ({
         links: [

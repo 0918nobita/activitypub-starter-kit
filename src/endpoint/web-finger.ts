@@ -8,9 +8,7 @@ const WebFingerQuery = t.type({
     resource: t.string,
 });
 
-export const withWebFingerEndpoint = (
-    server: FastifyInstance
-): FastifyInstance => {
+export const webFinger = (server: FastifyInstance): FastifyInstance => {
     // 「このユーザーネームのユーザは居る？」という質問に対して返答する役割をもつエンドポイント
     server.get('/.well-known/webfinger', async (request, reply) => {
         const decodeResult = WebFingerQuery.decode(request.query);

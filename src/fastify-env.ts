@@ -4,4 +4,4 @@ dotenv.config();
 
 export const ACCOUNT = process.env.ACCOUNT || '';
 export const HOSTNAME = process.env.HOSTNAME || '';
-export const ACTOR = `https://${HOSTNAME}/user/${ACCOUNT}`;
+export const ACTOR = `https://${HOSTNAME}/actor/${ACCOUNT}`;
