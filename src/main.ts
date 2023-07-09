@@ -5,11 +5,11 @@ import * as endpoint from './endpoint/index.js';
 
 const server = pipe(
     fastify({ logger: true }),
+    endpoint.actorInbox,
+    endpoint.actorOutbox,
     endpoint.hostMeta,
     endpoint.nodeInfo,
-    endpoint.webFinger,
-    endpoint.actorInbox,
-    endpoint.actorOutbox
+    endpoint.webFinger
 );
 
 void server.listen({ port: 3000 });
